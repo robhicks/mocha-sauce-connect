@@ -1,0 +1,39 @@
+{
+  "dependencies": {
+    "batch": "*",
+    "debug": "*",
+    "max-component": "*",
+    "mocha": "*",
+    "node-fetch": "^2.2.1",
+    "request": "*",
+    "sauce-connect-launcher": "^1.2.4",
+    "sum-component": "*",
+    "term-canvas": "*",
+    "wd": "*"
+  },
+  "description": "Mocha tests with SauceConnect",
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "rollup": "^0.67.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0"
+  },
+  "keywords": [
+    "mocha",
+    "test",
+    "tdd",
+    "bdd",
+    "saucelabs",
+    "sauce connect",
+    "selenium",
+    "testing"
+  ],
+  "main": "index.js",
+  "name": "mocha-sauce-connect",
+  "scripts": {
+    "build": "rollup -c",
+    "build-watch": "rollup -cw",
+    "postinstall": "rollup -c"
+  },
+  "version": "0.0.1"
+}
