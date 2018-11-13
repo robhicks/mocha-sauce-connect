@@ -1,22 +1,20 @@
 {
   "dependencies": {
-    "batch": "*",
-    "debug": "*",
-    "max-component": "*",
     "mocha": "*",
-    "node-fetch": "^2.2.1",
-    "request": "*",
-    "sauce-connect-launcher": "^1.2.4",
-    "sum-component": "*",
-    "term-canvas": "*",
     "wd": "*"
   },
   "description": "Mocha tests with SauceConnect",
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^5.9.0",
+    "fetch-mock": "^7.2.5",
+    "node-fetch": "^2.3.0",
+    "node-sauce-connect": "^4.5.0",
+    "nyc": "^13.1.0",
     "rollup": "^0.67.1",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^3.4.0"
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "sinon": "^7.1.1"
   },
   "keywords": [
     "mocha",
@@ -33,7 +31,10 @@
   "scripts": {
     "build": "rollup -c",
     "build-watch": "rollup -cw",
-    "postinstall": "rollup -c"
+    "postinstall": "rollup -c",
+    "mocha": "mocha -u bdd -R spec -t 5000 --watch test/tests.js",
+    "mocha-coverage": "nyc --reporter=text mocha -u bdd -R spec -t 5000 --inspect test/tests.js",
+    "test": "nyc --reporter=text mocha -u bdd -R spec -t 5000 --inspect test/tests.js"
   },
   "version": "0.0.1"
 }

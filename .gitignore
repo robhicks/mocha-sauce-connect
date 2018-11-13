@@ -1,1 +1,7 @@
 node_modules
+.nyc_output
+dist
+index.js
+index.mjs
+client.js
+grid.js
