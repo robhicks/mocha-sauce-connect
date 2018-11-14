@@ -1,6 +1,7 @@
 const { EventEmitter } = require("events");
 const fetch = require("node-fetch");
 const wd = require("wd");
+const { Builder } = require('selenium-webdriver');
 
 const RETRY_TIMEOUT = 1000;
 
@@ -18,6 +19,7 @@ export class MochaSauceRunner {
     this.name = conf.name;
     this.tunnelId = conf.tunnelId;
     this.port = conf.port;
+    this.server = `http://${this.user}:${this.key}@ondemand.saucelabs.com:80/wd/hub`;
   }
 
   browser(conf) {
@@ -31,26 +33,48 @@ export class MochaSauceRunner {
   }
 
   runner(browser) {
+    console.log('browser', browser);
     let url;
     let response;
-
-    browser.tags = this.tags;
-    browser.name = this.name;
-    browser.build = this.build;
-    const remoteBrowser = wd.promiseRemote(this.host, this.port, this.user, this.key);
+    let driver;
+    let sessionId;
 
     this.emit('init', browser);
 
-    return remoteBrowser
-      .init(browser)
+    if (process.env.TRAVIS_JOB_NUMBER) {
+      driver = new Builder()
+        .withCapabilities({
+          'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
+          build: process.env.TRAVIS_BUILD_NUMBER,
+          username: this.user,
+          accessKey: this.key,
+          browserName: browser.browserName,
+          browserPlatform: browser.platform
+        })
+        .usingServer(this.server)
+        .build();
+    } else {
+      driver = new Builder()
+      .withCapabilities({
+        username: this.user,
+        accessKey: this.key,
+        browserName: browser.browserName,
+        browserPlatform: browser.platform
+      })
+      .usingServer(this.server)
+      .build();
+    }
+
+    return driver.getSession()
+      .then(id => sessionId = id)
       .then(() => this.emit("start", browser))
-      .then(() => remoteBrowser.get(this.url))
-      .then(() => remoteBrowser.eval("window.ready"))
-      .then(resp => resp !== true ? setTimeout(() => this.runner(browser), RETRY_TIMEOUT) : remoteBrowser.eval('window.mochaResults'))
+      .then(() => driver.get(this.url))
+      .then(() => driver.executeScript(() => window.ready))
+      .then(() => console.log('response', response))
+      .then(resp => resp !== true ? setTimeout(() => this.runner(browser), RETRY_TIMEOUT) : driver.getWindowHandle('window.mochaResults'))
       .then(resp => response = resp)
-      // .then(() => console.log('response', response))
       .then(() => response.tests !== response.passes ? Promise.reject(new Error('one or more tests failed')) : true)
-      .then(() => url = `https://${this.user}:${this.key}@saucelabs.com/rest/v1/${this.user}/jobs/${remoteBrowser.sessionID}`)
+      .then(() => url = `https://${this.user}:${this.key}@saucelabs.com/rest/v1/${this.user}/jobs/${driver.sessionID}`)
       .then(() => fetch(url, {
         body: JSON.stringify({ 'custom-data': { mocha: response.jsonReport }, passed: response.tests === response.passes }),
         headers: { 'Content-Type': 'application/json'},
