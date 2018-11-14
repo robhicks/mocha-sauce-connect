@@ -49,6 +49,7 @@ export class MochaSauceRunner {
       .then(resp => resp !== true ? setTimeout(() => this.runner(browser), RETRY_TIMEOUT) : remoteBrowser.eval('window.mochaResults'))
       .then(resp => response = resp)
       // .then(() => console.log('response', response))
+      .then(() => response.tests !== response.passes ? Promise.reject(new Error('one or more tests failed')) : true)
       .then(() => url = `https://${this.user}:${this.key}@saucelabs.com/rest/v1/${this.user}/jobs/${remoteBrowser.sessionID}`)
       .then(() => fetch(url, {
         body: JSON.stringify({ 'custom-data': { mocha: response.jsonReport }, passed: response.tests === response.passes }),
