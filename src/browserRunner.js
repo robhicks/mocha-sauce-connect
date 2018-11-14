@@ -21,6 +21,6 @@ export function browserRunner(mocha, runner) {
         message: err.message,
         stack: err.stack
       }
-    })
-  })
+    });
+  });
 }
