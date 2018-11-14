@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <link rel="stylesheet" href="/node_modules/mocha/mocha.css">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="/node_modules/mocha/mocha.js"></script>
+    <script src="/node_modules/chai/chai.js"></script>
+    <script src="/dist/MochaSauceConnect.iife.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="/test/browser-tests.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      expect = chai.expect;
+      MochaSauceConnect.MochaSauceConnect(mocha, mocha.run());
+    });
+    </script>
+  </body>
+</html>

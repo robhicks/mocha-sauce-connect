@@ -7,6 +7,14 @@ export default [
   {
     input: resolve(root, 'src', 'MochaSauceConnect.js'),
     output: {
+      file: resolve(root, 'dist', 'MochaSauceConnect.iife.js'),
+      format: 'iife',
+      name: 'MochaSauceConnect'
+    }
+  },
+  {
+    input: resolve(root, 'src', 'MochaSauceConnect.js'),
+    output: {
       file: resolve(root, 'dist', 'MochaSauceConnect.js'),
       format: 'es'
     }

@@ -8,7 +8,7 @@ export function JSONReporter(runner) {
     if (suite.tests.length) {
       result.specs = [];
       for (let i = 0; i < suite.tests.length; i++) {
-        result.spec.push({
+        result.specs.push({
           "description": suite.tests[i].title,
 					"durationSec": (suite.tests[i].duration / 1000) || 0, // duration of spec run in seconds
 					"passed": suite.tests[i].state === "passed" // did the spec pass?
