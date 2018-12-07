@@ -1,19 +1,16 @@
-import { JSONReporter } from './JSONReporter.js';
-
 export function browserRunner(mocha, runner) {
   let failed = [];
+  let failures = 0;
+  let passes = 0;
+  let tries = 0;
 
-  mocha.reporter(JSONReporter);
-  new mocha._reporter(runner);
-
-  runner.on('end', () => {
-    runner.stats.failed = failed;
-    runner.stats.jsonReport = window.jsonReport;
-    window.mochaResults = runner.stats;
-    window.ready = true;
+  runner.on('pass', test => {
+    passes++;
+    tries++;
   });
-
   runner.on('fail', (test, err) => {
+    failures++;
+    tries++;
     failed.push({
       title: test.title,
       fullTitle: test.fullTitle(),
@@ -22,5 +19,13 @@ export function browserRunner(mocha, runner) {
         stack: err.stack
       }
     });
+  });
+
+  runner.on('end', () => {
+    let el = document.createElement('div');
+    el.id = 'mocha-sauce-connect';
+    el.setAttribute('mocha-results', JSON.stringify({passes, failures, failed, tries}));
+    document.body.append(el);
+    console.log('el', el);
   });
 }
