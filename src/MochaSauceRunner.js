@@ -85,12 +85,7 @@ export class MochaSauceRunner {
       .then(() => driver.wait(until.elementLocated(By.id('mocha-sauce-connect')), this.maxRunningTime))
       .then(() => driver.findElement({id: 'mocha-sauce-connect'}))
       .then(el => el.getAttribute('mocha-results'))
-      .then(res => {
-        console.log('res', res);
-        let obj = typeof res === 'string' ? JSON.parse(res) : res;
-        console.log('obj', obj);
-        return obj;
-      })
+      .then(res => typeof res === 'string' ? JSON.parse(res) : res)
       .then(resp => response = resp)
       .then(() => response.passes !== response.tries ? Promise.reject(new Error(response.failed)) : null)
       .then(() => JSON.stringify({ 'custom-data': { mocha: response }, passed: response.tries === response.passes }))
