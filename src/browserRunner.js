@@ -24,8 +24,13 @@ export function browserRunner(mocha, runner) {
   runner.on('end', () => {
     let el = document.createElement('div');
     el.id = 'mocha-sauce-connect';
-    el.setAttribute('mocha-results', JSON.stringify({passes, failures, failed, tries}));
+    el.setAttribute('mocha-results', JSON.stringify({
+      coverage: window.__coverage__,
+      passes,
+      failures,
+      failed,
+      tries
+    }));
     document.body.append(el);
-    console.log('el', el);
   });
 }

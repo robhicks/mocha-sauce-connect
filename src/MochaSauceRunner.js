@@ -1,15 +1,18 @@
 const { Builder, By, until } = require('selenium-webdriver');
 const { EventEmitter } = require("events");
 const fetch = require("node-fetch");
+const istanbul = require('istanbul');
+const path = require('path');
+
+const coveragePath = path.resolve(__dirname, 'coverage');
 
 const RETRY_TIMEOUT = 1000;
 const MAX_RETRIES = 5;
 
 export class MochaSauceRunner {
   constructor(conf) {
-    this.browsers = [];
+    this.browsers = conf.browsers || [];
     this.build = conf.build || "";
-    this.concurrency = 2;
     this.key = conf.accessKey || process.env.SAUCE_API_KEY;
     this.maxRetries = conf.maxRetries || MAX_RETRIES;
     this.maxRunningTime = conf.timeout || RETRY_TIMEOUT * MAX_RETRIES;
@@ -23,6 +26,7 @@ export class MochaSauceRunner {
     this.tunnelId = conf.tunnelId;
     this.url = conf.url || "";
     this.video = false;
+    this.collector = new istanbul.Collector();
   }
 
   browser(conf) {
@@ -95,11 +99,11 @@ export class MochaSauceRunner {
         method: 'PUT'
       }))
       .then(() => {
+        this.collector.add(response.coverage);
         this.emit('end', browser, response);
         fetch(url + '/stop', { method: 'PUT', body: {}});
       })
       .catch(err => {
-        console.log('err', err);
         fetch(url + '/stop', { method: 'PUT', body: {}});
         return Promise.reject(err);
       });
@@ -107,11 +111,7 @@ export class MochaSauceRunner {
 
   start() {
     return Promise.all(this.browsers.map(b => this.runner(b)))
-      .then(() => process.exit(0))
-      .catch(err => {
-        console.error("err", err);
-        process.exit(1);
-      });
+      .then(() => this.collector);
   }
 
   get build() {
