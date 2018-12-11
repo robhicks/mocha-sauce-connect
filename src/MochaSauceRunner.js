@@ -99,9 +99,10 @@ export class MochaSauceRunner {
         method: 'PUT'
       }))
       .then(() => {
-        this.collector.add(response.coverage);
+        if (response.coverage) this.collector.add(response.coverage);
         this.emit('end', browser, response);
         fetch(url + '/stop', { method: 'PUT', body: {}});
+        return this.collector;
       })
       .catch(err => {
         fetch(url + '/stop', { method: 'PUT', body: {}});

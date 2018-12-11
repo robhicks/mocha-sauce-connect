@@ -42,5 +42,5 @@
     "sc": "sc",
     "test": "nyc --reporter=text mocha -u bdd -R spec -t 5000 --inspect test/tests.js"
   },
-  "version": "0.0.4"
+  "version": "0.0.5"
 }

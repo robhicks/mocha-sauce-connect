@@ -32,5 +32,6 @@ export function browserRunner(mocha, runner) {
       tries
     }));
     document.body.append(el);
+    // console.log('el', el);
   });
 }
