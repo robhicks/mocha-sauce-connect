@@ -8,7 +8,13 @@
   "description": "Mocha tests with SauceConnect",
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.9.0",
+    "eslint": "^5.11.1",
+    "eslint-config-frontier": "github:fs-webdev/eslint-config-frontier",
+    "eslint-plugin-chai-expect": "^2.0.1",
+    "eslint-plugin-html": "^5.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "eslint-plugin-node": "^8.0.0",
     "fetch-mock": "^7.2.5",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
@@ -17,6 +23,9 @@
     "selenium-standalone": "^6.15.4",
     "sinon": "^7.1.1",
     "static-server": "^2.2.1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   },
   "keywords": [
     "mocha",
@@ -42,5 +51,5 @@
     "sc": "sc",
     "test": "nyc --reporter=text mocha -u bdd -R spec -t 5000 --inspect test/tests.js"
   },
-  "version": "0.0.5"
+  "version": "0.0.6"
 }

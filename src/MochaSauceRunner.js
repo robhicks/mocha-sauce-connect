@@ -1,10 +1,7 @@
 const { Builder, By, until } = require('selenium-webdriver');
-const { EventEmitter } = require("events");
-const fetch = require("node-fetch");
+const { EventEmitter } = require('events');
+const fetch = require('node-fetch');
 const istanbul = require('istanbul');
-const path = require('path');
-
-const coveragePath = path.resolve(__dirname, 'coverage');
 
 const RETRY_TIMEOUT = 1000;
 const MAX_RETRIES = 5;
@@ -12,7 +9,7 @@ const MAX_RETRIES = 5;
 export class MochaSauceRunner {
   constructor(conf) {
     this.browsers = conf.browsers || [];
-    this.build = conf.build || "";
+    this.build = conf.build || '';
     this.key = conf.accessKey || process.env.SAUCE_API_KEY;
     this.maxRetries = conf.maxRetries || MAX_RETRIES;
     this.maxRunningTime = conf.timeout || RETRY_TIMEOUT * MAX_RETRIES;
@@ -24,7 +21,7 @@ export class MochaSauceRunner {
     this.server = `http://${this.user}:${this.key}@ondemand.saucelabs.com:80/wd/hub`;
     this.tags = conf.tags || [];
     this.tunnelId = conf.tunnelId;
-    this.url = conf.url || "";
+    this.url = conf.url || '';
     this.video = false;
     this.collector = new istanbul.Collector();
   }
@@ -34,7 +31,7 @@ export class MochaSauceRunner {
   }
 
   record(video, screenshots) {
-    if (typeof screenshots === "undefined") screenshots = video;
+    if (typeof screenshots === 'undefined') screenshots = video;
     this.video = video;
     this.screenshots = screenshots;
   }
@@ -75,37 +72,37 @@ export class MochaSauceRunner {
     } else {
       const capabilities = Object.assign({}, creds, browsers, job);
       driver = new Builder()
-      .withCapabilities(capabilities)
-      .usingServer(this.server)
-      .build();
+        .withCapabilities(capabilities)
+        .usingServer(this.server)
+        .build();
     }
 
     return driver.getSession()
       // .then(session => console.log('session', session))
       .then(session => sessionId = session.id_)
-      .then(() => this.emit("start", browser))
+      .then(() => this.emit('start', browser))
       .then(() => driver.get(this.url))
       .then(() => url = `https://${this.user}:${this.key}@saucelabs.com/rest/v1/${this.user}/jobs/${sessionId}`)
       .then(() => driver.wait(until.elementLocated(By.id('mocha-sauce-connect')), this.maxRunningTime))
-      .then(() => driver.findElement({id: 'mocha-sauce-connect'}))
+      .then(() => driver.findElement({ id: 'mocha-sauce-connect' }))
       .then(el => el.getAttribute('mocha-results'))
-      .then(res => typeof res === 'string' ? JSON.parse(res) : res)
+      .then(res => (typeof res === 'string' ? JSON.parse(res) : res))
       .then(resp => response = resp)
-      .then(() => response.passes !== response.tries ? Promise.reject(new Error(response.failed)) : null)
+      .then(() => (response.passes !== response.tries ? Promise.reject(new Error(response.failed)) : null))
       .then(() => JSON.stringify({ 'custom-data': { mocha: response }, passed: response.tries === response.passes }))
       .then(body => fetch(url, {
         body,
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         method: 'PUT'
       }))
       .then(() => {
         if (response.coverage) this.collector.add(response.coverage);
         this.emit('end', browser, response);
-        fetch(url + '/stop', { method: 'PUT', body: {}});
+        fetch(`${url}/stop`, { method: 'PUT', body: {}});
         return this.collector;
       })
       .catch(err => {
-        fetch(url + '/stop', { method: 'PUT', body: {}});
+        fetch(`${url}/stop`, { method: 'PUT', body: {}});
         return Promise.reject(err);
       });
   }
