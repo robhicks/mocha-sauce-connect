@@ -5,7 +5,7 @@ This is a simple test runner for running Mocha tests on SauceLabs using selenium
 
 # Why this Repo?
 
-This was created because I couldn't find any decent test runners for Mocha on SauceLabs in a Continuous Integration (CI) environment. Okay, I found some test runners but they either required me to use Grunt (yuck), were too hard to set up, or haven't been updated recently (in the last few years), or wouldn't actually run in Travis through SauceConnect.
+This was created because I couldn't find any decent test runners for Mocha on SauceLabs in a Continuous Integration (CI) environment. Okay, I found some test runners but they either required me to use Grunt (yuck), were too hard to set up, or haven't been updated in the last few years, or wouldn't actually run in Travis through SauceConnect.
 
 So why not use Karma? Because Mocha is simple to understand. With Mocha you build a page just you do when you're developing. You load assets the same way. You run scripts the same way. Debugging is straight forward. Life is just better.
 
